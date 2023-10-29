@@ -6,7 +6,9 @@ def logger_decorator(backend_logger, func):
     if inspect.iscoroutinefunction(func):
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
+            print("Before logging")  # Debugging line
             backend_logger.info(f"Entering {func.__name__}")
+            print("After logging")  # Debugging line
             result = await func(*args, **kwargs)
             backend_logger.info(f"Exiting {func.__name__}")
             return result
@@ -14,7 +16,9 @@ def logger_decorator(backend_logger, func):
     else:
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
+            print("Before logging")  # Debugging line
             backend_logger.info(f"Entering {func.__name__}")
+            print("After logging")  # Debugging line
             result = func(*args, **kwargs)
             backend_logger.info(f"Exiting {func.__name__}")
             return result
@@ -52,9 +56,8 @@ def logger_decorator(backend_logger, func):
 # ... existing imports ...
 
 def apply_logger_to_all_functions(backend_logger, functions_to_decorate):
-    decorated_functions = []
+    decorated_functions = {}
     for func in functions_to_decorate:
         decorated_func = logger_decorator(backend_logger, func)
-        globals()[func.__name__] = decorated_func
-        decorated_functions.append(decorated_func)
+        decorated_functions[func.__name__] = decorated_func
     return decorated_functions
